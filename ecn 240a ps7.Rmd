@@ -23,9 +23,6 @@ library(dplyr)
 
 RSdata <- read_csv("~/Documents/Classes/Winter 2017/ECN 240A Econometrics/Section/PS7/RSdata.csv")
 
-# generate contemporary futures price (for demand regressions)
-RSdata$ln_cfp <- log(RSdata$fut_price / RSdata$cpi)
-
 # OLS models
 
 # supply model
@@ -34,7 +31,7 @@ supplyOLS <- lm(data = RSdata, ln_qs ~ ln_fp + trendsp1 + trendsp2 + trendsp3)
 summary(supplyOLS)
 
 # demand model
-demandOLS <- lm(data = RSdata, ln_qd ~ ln_cfp + trendsp1+ trendsp2+ trendsp3)
+demandOLS <- lm(data = RSdata, ln_qd ~ ln_sp + trendsp1+ trendsp2+ trendsp3)
 
 summary(demandOLS)
 
@@ -63,23 +60,27 @@ row.names(compare.supplyIV) <- c("Supply elas.", "(std. error)", "Shock w(t)", "
 
 # demand model
 
-demandIV.firststage <- lm(data = RSdata, formula = ln_cfp ~ ln_w + trendsp1 + trendsp2 + trendsp3)
+demandIV.firststage <- lm(data = RSdata, formula = ln_sp ~ ln_w + trendsp1 + trendsp2 + trendsp3)
 
 summary(demandIV.firststage)
 
-demandIV <- ivreg(data = RSdata, formula = ln_qd ~ ln_cfp + trendsp1 + trendsp2 + trendsp3 | trendsp1 + trendsp2 + trendsp3 + ln_w)
+demandIV <- ivreg(data = RSdata, formula = ln_qd ~ ln_sp + trendsp1 + trendsp2 + trendsp3 | trendsp1 + trendsp2 + trendsp3 + ln_w)
 
 summary(demandIV)
 
 # Our estimates of the supply and demand elasticities are similar to those in the RS paper.
 ```
 
-## OLS and IV regression results
-``` {r tables}
-kable(compare.supplyIV, digits = 3, caption = "IV regressions")
+## OLS Regression Results
+``` {r results='asis', echo=FALSE}
+stargazer(supplyOLS, header=FALSE, omit = c("trendsp1", "trendsp2", "trendsp3", "Constant"), covariate.labels = "supply elasticity")
+
+stargazer(demandOLS, header=FALSE, omit = c("trendsp1", "trendsp2", "trendsp3", "Constant"), covariate.labels = "demand elasticity")
 ```
 
-## Stargazer Test
-```{r results='asis'}
-stargazer(supplyIV)
+## IV Regression Results
+```{r results='asis', echo=FALSE}
+stargazer(supplyIV, supplyIV.firststage, header=FALSE, omit = c("trendsp1", "trendsp2", "trendsp3", "Constant"), covariate.labels = c("supply elasticity", "first stage w-1", "first stage w"))
+
+stargazer(demandIV, demandIV.firststage, header=FALSE, omit = c("trendsp1", "trendsp2", "trendsp3", "Constant"), covariate.labels = c("demand elasticity", "first stage w"))
 ```
