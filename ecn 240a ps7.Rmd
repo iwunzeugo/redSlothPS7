@@ -2,7 +2,7 @@
 title: "Computing Assignment VII"
 author: "redSloth: Tyler Hoppenfield, Daniel Mather, Iwunze Ugo"
 date: "March 9, 2018"
-output: pdf_document
+output: beamer_presentation
 ---
 
 ```{r setup, include=FALSE}
@@ -83,7 +83,7 @@ RS.se <- c(sIV1.RS[2], sIV2.RS[2], sFS1.RS[2], sFS2.RS[2], sOLS.RS[2],  dIV.RS[2
 se.results <- rbind(redSloth.se, RS.se)
 ```
 
-## IV/OLS Regressions for Supply and Demand
+# IV/OLS Regressions for Supply
 ```{r echo=FALSE}
 
 kable(coef.results[,1:6], col.names = c("$\\beta_s$", "$\\omega_t$", "$1^{st}$ Stage $\\omega_{t-1}$", "$1^{st}$ Stage $\\omega_t$", "F-stat", "$\\beta_{s(OLS)}$"), caption = "Supply coefficients comparison")
@@ -91,12 +91,15 @@ kable(coef.results[,1:6], col.names = c("$\\beta_s$", "$\\omega_t$", "$1^{st}$ S
 kable(se.results[,1:5], col.names = c("$\\beta_s$", "$\\omega_t$", "$1^{st}$ Stage $\\omega_{t-1}$", "$1^{st}$ Stage $\\omega_t$", "$\\beta_{s(OLS)}$"), caption = "Supply standard errors comparison")
 ```
 
+# IV/OLS Regressions for Demand
+
 ```{r echo=FALSE}
 kable(coef.results[,7:10], col.names = c("$\\beta_d$","$1^{st}$ Stage $\\omega_t$", "F-stat", "$\\beta_{d(OLS)}$"), caption = "Demand coefficients comparison")
 
 kable(se.results[,6:8], col.names = c("$\\beta_d$","$1^{st}$ Stage $\\omega_t$", "$\\beta_{d(OLS)}$"), caption = "Demand standard errors comparison")
 ```
 
+#Summary
 The results from our regressions are similar to those obtained in the Roberts-Schlenker paper. However, compared to the RS paper, our instrument appears relatively weak for the supply estimate and relatively strong for the demand estimate. This could be because the data we use are slightly different.
 
 One substantial difference is the estimate of supply elasticity from the OLS regression. Here our estimate is much higher than RS. This is because we include the weather (or yield) shock, while RS only use the uninstrumented price. Removing $\omega_t$, lowers $\beta_{s(OLS)}$ to 0.038.
