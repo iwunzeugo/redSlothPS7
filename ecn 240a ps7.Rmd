@@ -21,6 +21,7 @@ library(knitr)
 library(broom)
 library(dplyr)
 library(xtable)
+library(kableExtra)
 
 RSdata <- read_csv("~/Documents/Classes/Winter 2017/ECN 240A Econometrics/Section/PS7/RSdata.csv")
 
@@ -55,7 +56,7 @@ demandIV <- ivreg(data = RSdata, formula = ln_qd ~ ln_sp + trendsp1 + trendsp2 +
 
 dIV <- c(coef(summary(demandIV))["ln_sp", "Estimate"], coef(summary(demandIV))["ln_sp", "Std. Error"])
 
-dF <- c(summary(supplyIV, diagnostics = TRUE)$diagnostics["Weak instruments", "statistic"], 1)
+dF <- c(summary(demandIV, diagnostics = TRUE)$diagnostics["Weak instruments", "statistic"], 1)
 
 sIV1.RS <- c(0.096, 0.025)
 sIV2.RS <- c(1.229, 0.138)
@@ -72,34 +73,30 @@ results.table <- round(matrix(c(sIV1, sIV1.RS, sIV2, sIV2.RS, sFS1, sFS1.RS, sFS
 
 colnames(results.table) <- c("Estimate","Std. Error")
 
-redSloth.coefs <- round(c(sIV1[1], sIV2[1], sFS1[1], sFS2[1], sF[1], sOLS[1], dIV[1], dFS[1], dF[1], dOLS[1]),3)
-RS.coefs <- c(sIV1.RS[1], sIV2.RS[1], sFS1.RS[1], sFS2.RS[1], sF.RS[1], sOLS.RS[1], dIV.RS[1], dFS.RS[1], dF.RS[1], dOLS.RS[1])
+redSloth.coefs <- round(c(sOLS[1], sIV1[1], sIV2[1], sFS1[1], sFS2[1], sF[1], dOLS[1], dIV[1], dFS[1], dF[1]),3)
 
-coef.results <- rbind(redSloth.coefs, RS.coefs)
+RS.coefs <- c(sOLS.RS[1], sIV1.RS[1], sIV2.RS[1], sFS1.RS[1], sFS2.RS[1], sF.RS[1], dOLS.RS[1], dIV.RS[1], dFS.RS[1], dF.RS[1])
 
-redSloth.se <- round(c(sIV1[2], sIV2[2], sFS1[2], sFS2[2], sOLS[2], dIV[2], dFS[2], dOLS[2]),3)
-RS.se <- c(sIV1.RS[2], sIV2.RS[2], sFS1.RS[2], sFS2.RS[2], sOLS.RS[2],  dIV.RS[2], dFS.RS[2], dOLS.RS[2])
+coef.results <- cbind(redSloth.coefs, RS.coefs)
 
-se.results <- rbind(redSloth.se, RS.se)
+redSloth.se <- round(c(sOLS[2], sIV1[2], sIV2[2], sFS1[2], sFS2[2], NA, dOLS[2], dIV[2], dFS[2], NA),3)
+
+RS.se <- c(sOLS.RS[2], sIV1.RS[2], sIV2.RS[2], sFS1.RS[2], sFS2.RS[2], NA,  dOLS.RS[2], dIV.RS[2], dFS.RS[2], NA)
+
+se.results <- cbind(redSloth.se, RS.se)
+
+results.all <- cbind(coef.results, se.results)
+results.all[6,3:4] <- c("","")
+results.all[10,3:4] <- c("","")
+rownames(results.all) <- c("$\\beta_{s(OLS)}$","$\\beta_{s(IV)}$","$\\omega_{t(IV)}$","$\\omega_{t-1(FS)}$","$\\omega_{t(FS)}$","$F_{s(FS)}$","$\\beta_{d(OLS)}$","$\\beta_{d(IV)}$","$\\omega_{t(FS)}$","$F_{d(FS)}$")
 ```
 
-# IV/OLS Regressions for Supply
-```{r echo=FALSE}
-
-kable(coef.results[,1:6], col.names = c("$\\beta_s$", "$\\omega_t$", "$1^{st}$ Stage $\\omega_{t-1}$", "$1^{st}$ Stage $\\omega_t$", "F-stat", "$\\beta_{s(OLS)}$"), caption = "Supply coefficients comparison")
-
-kable(se.results[,1:5], col.names = c("$\\beta_s$", "$\\omega_t$", "$1^{st}$ Stage $\\omega_{t-1}$", "$1^{st}$ Stage $\\omega_t$", "$\\beta_{s(OLS)}$"), caption = "Supply standard errors comparison")
-```
-
-# IV/OLS Regressions for Demand
-
-```{r echo=FALSE}
-kable(coef.results[,7:10], col.names = c("$\\beta_d$","$1^{st}$ Stage $\\omega_t$", "F-stat", "$\\beta_{d(OLS)}$"), caption = "Demand coefficients comparison")
-
-kable(se.results[,6:8], col.names = c("$\\beta_d$","$1^{st}$ Stage $\\omega_t$", "$\\beta_{d(OLS)}$"), caption = "Demand standard errors comparison")
+#OLS/IV Regressions
+```{r test, echo = FALSE}
+kable(results.all, caption = "Regression results")
 ```
 
 #Summary
-The results from our regressions are similar to those obtained in the Roberts-Schlenker paper. However, compared to the RS paper, our instrument appears relatively weak for the supply estimate and relatively strong for the demand estimate. This could be because the data we use are slightly different.
+The results from our regressions are similar to those obtained in the Roberts-Schlenker paper. However, compared to the RS paper, our instrument appears \textbf{relatively weak for the supply estimate} and \textbf{relatively strong for the demand estimate.} This could be because the data we use are slightly different.
 
-One substantial difference is the estimate of supply elasticity from the OLS regression. Here our estimate is much higher than RS. This is because we include the weather (or yield) shock, while RS only use the uninstrumented price. Removing $\omega_t$, lowers $\beta_{s(OLS)}$ to 0.038.
+One substantial difference is the estimate of supply elasticity from the OLS regression. Here our estimate is much higher than RS. This is because we include the weather (or yield) shock, while RS only use the uninstrumented price. \textbf{Removing $\boldsymbol{\omega_t}$, lowers $\boldsymbol{\beta_{s(OLS)}}$ to 0.038.}
