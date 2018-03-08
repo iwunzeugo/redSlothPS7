@@ -202,3 +202,7 @@ hausman_demandOLS
 The results from our regressions are similar to those obtained in the Roberts-Schlenker paper. However, compared to the RS paper, our instrument appears \textbf{relatively weak for the supply estimate} and \textbf{relatively strong for the demand estimate.} This could be because the data we use are slightly different.
 
 One substantial difference is the estimate of supply elasticity from the OLS regression. Here our estimate is much higher than RS. This is because we include the weather (or yield) shock, while RS only use the uninstrumented price. \textbf{Removing $\boldsymbol{\omega_t}$, lowers $\boldsymbol{\beta_{s(OLS)}}$ to 0.038.}
+
+#Question 5 and 6
+1. The additional seven years of data have only a moderate impact on our results--this could be responsible for some of the differences we see from the published results.
+2. The data as posted is in proprietary Stata format, and unnecessarily spread across multiple files.  This is not best practices, and makes it more difficult to understand the data structure and contents.
